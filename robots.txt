@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ugh777.github.io/atlas-weather/sitemap.xml
