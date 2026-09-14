@@ -105,12 +105,6 @@
     .search button:disabled { cursor: wait; opacity: .65; }
     .status { min-height: 22px; margin: 0 2px 16px; color: var(--muted); font-size: .87rem; }
     .status.error { color: #c25e4b; }
-    .account { margin: 15px 0 18px; border:1px solid var(--line); border-radius:15px; background:var(--surface); }
-    .account summary { cursor:pointer; padding:12px 15px; color:var(--accent-deep); font-weight:750; }
-    .account-form { display:grid; gap:9px; padding:0 15px 15px; }
-    .account-form input { padding:11px 12px; border:1px solid var(--line); border-radius:10px; background:var(--surface-strong); }
-    .account-actions { display:flex; gap:8px; }
-    .account-actions button { padding:9px 13px; border-radius:10px; color:#fff; background:var(--accent-deep); font-weight:700; }
 
     .current {
       position: relative; overflow: hidden; padding: 25px 26px 23px; border: 1px solid var(--line);
@@ -168,15 +162,6 @@
     <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span class="eyebrow">Atlas weather</span></div>
     <h1>Find your weather.</h1>
     <p class="intro">A clear view of today and the days ahead, wherever in the world you are.</p>
-    <details class="account">
-      <summary id="account-summary">Sign in or create an account</summary>
-      <form class="account-form" id="account-form">
-        <input id="account-email" type="email" placeholder="Email address" autocomplete="email" required>
-        <input id="account-password" type="password" placeholder="Password (8+ characters)" autocomplete="new-password" minlength="8" required>
-        <div class="account-actions"><button type="submit" data-mode="signin">Sign in</button><button type="button" id="signup-button">Sign up</button></div>
-        <small class="status" id="account-status">Your password is securely handled by Supabase Auth.</small>
-      </form>
-    </details>
 
     <form class="search" id="search-form">
       <label class="search-box" aria-label="Search for a city">
@@ -293,26 +278,6 @@
       const query = $("city-input").value.trim();
       if (query) load(query);
     });
-    const supabaseUrl = "https://ezkskadvepbqyaxlibdl.supabase.co";
-    const supabasePublishableKey = "YOUR_SUPABASE_PUBLISHABLE_KEY";
-    async function supabaseAuth(path, email, password) {
-      if (supabaseUrl.startsWith("YOUR_")) throw new Error("Add Supabase credentials to enable accounts.");
-      const response = await fetch(`${supabaseUrl}${path}`, { method: "POST", headers: { apikey: supabasePublishableKey, "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.msg || body.error_description || "Authentication failed.");
-      return body;
-    }
-    async function accountAction(mode) {
-      const email = $("account-email").value, password = $("account-password").value;
-      $("account-status").textContent = mode === "signup" ? "Creating your account…" : "Signing in…";
-      try {
-        const body = await supabaseAuth(mode === "signup" ? "/auth/v1/signup" : "/auth/v1/token?grant_type=password", email, password);
-        $("account-summary").textContent = mode === "signup" ? "Account created — check your email" : `Signed in as ${body.user?.email || email}`;
-        $("account-status").textContent = "Your account is protected by Supabase Auth.";
-      } catch (error) { $("account-status").textContent = error.message; $("account-status").classList.add("error"); }
-    }
-    $("account-form").addEventListener("submit", (event) => { event.preventDefault(); accountAction("signin"); });
-    $("signup-button").addEventListener("click", () => accountAction("signup"));
     load();
   </script>
 </body>
