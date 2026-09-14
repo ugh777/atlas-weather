@@ -60,15 +60,21 @@ st.markdown(
     """
     <style>
     :root { --ink:#163247; --muted:#6f8794; --accent:#168b9b; }
-    .stApp { background: radial-gradient(circle at 86% 0%, rgba(50,183,192,.18), transparent 30rem), #eef5f8; color:var(--ink); }
+    .stApp { position:relative; overflow:hidden; background:linear-gradient(145deg,#dff3f4 0%,#f7f4eb 48%,#dceef6 100%); color:var(--ink); }
+    .stApp::before, .stApp::after { content:""; position:fixed; z-index:0; width:34rem; height:34rem; border-radius:50%; pointer-events:none; filter:blur(10px); opacity:.7; }
+    .stApp::before { top:-15rem; right:-10rem; background:radial-gradient(circle at 35% 35%,rgba(67,201,196,.5),rgba(67,201,196,0) 68%); }
+    .stApp::after { bottom:-18rem; left:-12rem; background:radial-gradient(circle at 55% 45%,rgba(255,193,102,.45),rgba(255,193,102,0) 68%); }
+    .stApp > * { position:relative; z-index:1; }
     @media (prefers-color-scheme: dark) {
-      .stApp { background: radial-gradient(circle at 86% 0%, rgba(61,194,195,.16), transparent 30rem), #10232d; }
+      .stApp { background:linear-gradient(145deg,#102d38 0%,#172a3a 48%,#243148 100%); }
+      .stApp::before { background:radial-gradient(circle at 35% 35%,rgba(61,194,195,.34),rgba(61,194,195,0) 68%); }
+      .stApp::after { background:radial-gradient(circle at 55% 45%,rgba(245,173,90,.22),rgba(245,173,90,0) 68%); }
     }
     .block-container { max-width: 640px; padding-top: 3.5rem; }
     .eyebrow { color:var(--accent); font-size:.74rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
     .intro { color:var(--muted); font-size:1rem; margin-bottom:1.5rem; }
-    .weather-card { border:1px solid rgba(29,75,99,.12); border-radius:24px; padding:1.55rem; background:rgba(255,255,255,.7); box-shadow:0 22px 60px rgba(26,76,94,.14); }
-    @media (prefers-color-scheme: dark) { .weather-card { background:rgba(25,50,61,.84); border-color:rgba(220,248,249,.12); } }
+    .weather-card { border:1px solid rgba(255,255,255,.62); border-radius:24px; padding:1.55rem; background:rgba(255,255,255,.58); box-shadow:0 22px 60px rgba(26,76,94,.18); backdrop-filter:blur(18px); }
+    @media (prefers-color-scheme: dark) { .weather-card { background:rgba(25,50,61,.68); border-color:rgba(220,248,249,.16); } }
     .place { color:var(--muted); font-size:.9rem; font-weight:650; }
     .hero { display:flex; align-items:center; justify-content:space-between; margin-top:1.2rem; }
     .temperature { font-size:clamp(4.2rem,18vw,7rem); font-weight:250; line-height:.82; letter-spacing:-.1em; }
