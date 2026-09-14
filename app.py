@@ -1,4 +1,5 @@
 import datetime as dt
+import os
 from typing import Any
 
 import requests
@@ -11,6 +12,22 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed",
 )
+
+SUPABASE_URL = st.secrets.get("SUPABASE_URL", os.getenv("SUPABASE_URL", "")).rstrip("/")
+SUPABASE_ANON_KEY = st.secrets.get("SUPABASE_ANON_KEY", os.getenv("SUPABASE_ANON_KEY", ""))
+
+
+def auth_request(path: str, payload: dict[str, str]) -> dict[str, Any]:
+    response = requests.post(
+        f"{SUPABASE_URL}{path}",
+        json=payload,
+        headers={"apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json"},
+        timeout=10,
+    )
+    if not response.ok:
+        message = response.json().get("msg") or response.json().get("error_description") or "Authentication failed."
+        raise ValueError(message)
+    return response.json()
 
 FALLBACK = {
     "name": "Tokyo",
@@ -144,9 +161,35 @@ def load_weather(query: str) -> tuple[dict[str, Any], bool, str | None]:
         return FALLBACK, True, None
 
 
-st.markdown('<div class="eyebrow">Atlas weather</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="brand"><span class="brand-mark">✦</span><span class="eyebrow">Atlas weather</span></div>',
+    unsafe_allow_html=True,
+)
 st.title("Find your weather.")
 st.markdown('<p class="intro">A clear view of today and the days ahead, wherever in the world you are.</p>', unsafe_allow_html=True)
+
+with st.expander("Account", expanded=False):
+    if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+        st.info("Add SUPABASE_URL and SUPABASE_ANON_KEY to Streamlit secrets to enable secure accounts.")
+    elif st.session_state.get("user_email"):
+        st.success(f"Signed in as {st.session_state.user_email}")
+        if st.button("Sign out"):
+            st.session_state.pop("user_email", None)
+            st.rerun()
+    else:
+        auth_mode = st.radio("Choose an action", ["Sign in", "Sign up"], horizontal=True, label_visibility="collapsed")
+        with st.form("account-form"):
+            email = st.text_input("Email", autocomplete="email")
+            password = st.text_input("Password", type="password", autocomplete="new-password")
+            account_submit = st.form_submit_button(auth_mode)
+        if account_submit:
+            try:
+                endpoint = "/auth/v1/signup" if auth_mode == "Sign up" else "/auth/v1/token?grant_type=password"
+                session = auth_request(endpoint, {"email": email, "password": password})
+                st.session_state.user_email = session.get("user", {}).get("email", email)
+                st.success("Account created. Check your email to confirm it." if auth_mode == "Sign up" else "Signed in successfully.")
+            except (requests.RequestException, ValueError) as error:
+                st.error(str(error))
 
 with st.form("city-search"):
     query = st.text_input("Search any city in the world", value="Tokyo", label_visibility="collapsed", placeholder="Search any city in the world")

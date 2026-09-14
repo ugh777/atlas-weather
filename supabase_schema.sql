@@ -1,0 +1,3 @@
+-- Supabase Auth stores passwords securely. Do not create a plaintext password table.
+-- In Supabase Dashboard: Authentication > Providers > Email, enable Email provider.
+-- The built-in auth.users table stores sign-up and sign-in accounts.

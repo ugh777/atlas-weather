@@ -17,6 +17,10 @@ streamlit run app.py
 
 No API key or secrets are required.
 
+## Secure accounts
+
+Authentication uses Supabase Auth, which hashes passwords and manages sessions. Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` for local Streamlit use, add the same `SUPABASE_URL` and `SUPABASE_ANON_KEY` as Streamlit Cloud secrets, and replace the two placeholders near the bottom of `index.html` for the static app. Never commit the real anon key or any service-role key; Supabase Auth stores the password hashes in its managed `auth.users` table.
+
 ## Live apps
 
 - Static web app: https://ugh777.github.io/atlas-weather/
