@@ -293,7 +293,7 @@
       const query = $("city-input").value.trim();
       if (query) load(query);
     });
-    const supabaseUrl = "YOUR_SUPABASE_URL";
+    const supabaseUrl = "https://ezkskadvepbqyaxlibdl.supabase.co";
     const supabasePublishableKey = "YOUR_SUPABASE_PUBLISHABLE_KEY";
     async function supabaseAuth(path, email, password) {
       if (supabaseUrl.startsWith("YOUR_")) throw new Error("Add Supabase credentials to enable accounts.");

@@ -21,6 +21,8 @@ No API key or secrets are required.
 
 Authentication uses Supabase Auth, which hashes passwords and manages sessions. Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` for local Streamlit use, add `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` as Streamlit Cloud secrets, and replace the two placeholders near the bottom of `index.html` for the static app. Never commit the real key or any service-role key; Supabase Auth stores password hashes in its managed `auth.users` table.
 
+The project URL (`https://ezkskadvepbqyaxlibdl.supabase.co`) is safe to reference in the app. The `postgresql://...` connection string is different: it is for trusted backend/server code only, requires the database password, and must not be exposed in browser code, Streamlit source, or GitHub.
+
 ## Live apps
 
 - Static web app: https://ugh777.github.io/atlas-weather/

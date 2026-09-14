@@ -13,7 +13,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-SUPABASE_URL = st.secrets.get("SUPABASE_URL", os.getenv("SUPABASE_URL", "")).rstrip("/")
+SUPABASE_URL = st.secrets.get(
+    "SUPABASE_URL",
+    os.getenv("SUPABASE_URL", "https://ezkskadvepbqyaxlibdl.supabase.co"),
+).rstrip("/")
 SUPABASE_ANON_KEY = st.secrets.get(
     "SUPABASE_PUBLISHABLE_KEY",
     st.secrets.get(
