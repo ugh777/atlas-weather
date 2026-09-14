@@ -294,10 +294,10 @@
       if (query) load(query);
     });
     const supabaseUrl = "YOUR_SUPABASE_URL";
-    const supabaseAnonKey = "YOUR_SUPABASE_ANON_KEY";
+    const supabasePublishableKey = "YOUR_SUPABASE_PUBLISHABLE_KEY";
     async function supabaseAuth(path, email, password) {
       if (supabaseUrl.startsWith("YOUR_")) throw new Error("Add Supabase credentials to enable accounts.");
-      const response = await fetch(`${supabaseUrl}${path}`, { method: "POST", headers: { apikey: supabaseAnonKey, "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
+      const response = await fetch(`${supabaseUrl}${path}`, { method: "POST", headers: { apikey: supabasePublishableKey, "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
       const body = await response.json();
       if (!response.ok) throw new Error(body.msg || body.error_description || "Authentication failed.");
       return body;

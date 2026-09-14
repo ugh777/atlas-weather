@@ -14,7 +14,13 @@ st.set_page_config(
 )
 
 SUPABASE_URL = st.secrets.get("SUPABASE_URL", os.getenv("SUPABASE_URL", "")).rstrip("/")
-SUPABASE_ANON_KEY = st.secrets.get("SUPABASE_ANON_KEY", os.getenv("SUPABASE_ANON_KEY", ""))
+SUPABASE_ANON_KEY = st.secrets.get(
+    "SUPABASE_PUBLISHABLE_KEY",
+    st.secrets.get(
+        "SUPABASE_ANON_KEY",
+        os.getenv("SUPABASE_PUBLISHABLE_KEY", os.getenv("SUPABASE_ANON_KEY", "")),
+    ),
+)
 
 
 def auth_request(path: str, payload: dict[str, str]) -> dict[str, Any]:
