@@ -198,4 +198,10 @@ for index, date in enumerate(daily["time"][:5]):
         f'<strong>{round(daily["temperature_2m_max"][index])}° <span class="low">{round(daily["temperature_2m_min"][index])}°</span></strong></div>'
     )
 st.markdown(f'<div class="forecast-grid">{"".join(cards)}</div>', unsafe_allow_html=True)
-st.caption("Weather data by Open-Meteo · No API key required")
+st.markdown(
+    '<div style="margin-top:2rem;text-align:center;color:#6f8794;font-size:.76rem">'
+    'Weather data by <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a>'
+    ' · <a href="https://ugh777.github.io/atlas-weather/" target="_blank">Open the public web app</a>'
+    '</div>',
+    unsafe_allow_html=True,
+)
