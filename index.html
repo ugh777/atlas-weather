@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Atlas Weather</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #eef5f8;
+      --surface: rgba(255, 255, 255, 0.82);
+      --surface-strong: #ffffff;
+      --ink: #163247;
+      --muted: #6f8794;
+      --line: rgba(29, 75, 99, 0.12);
+      --accent: #168b9b;
+      --accent-deep: #0b6678;
+      --glow: rgba(50, 183, 192, 0.2);
+      --shadow: 0 22px 60px rgba(26, 76, 94, 0.14);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #10232d;
+        --surface: rgba(25, 50, 61, 0.84);
+        --surface-strong: #1b3744;
+        --ink: #e7f4f4;
+        --muted: #9ebbc2;
+        --line: rgba(220, 248, 249, 0.12);
+        --accent: #5dd3d1;
+        --accent-deep: #91e4df;
+        --glow: rgba(61, 194, 195, 0.2);
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 85% 4%, var(--glow), transparent 30rem),
+        radial-gradient(circle at 0% 70%, rgba(245, 188, 82, 0.14), transparent 24rem),
+        var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    main { width: min(100% - 32px, 640px); margin: 0 auto; padding: 56px 0 40px; }
+    .eyebrow { color: var(--accent); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+    h1 { margin: 8px 0 7px; font-size: clamp(2rem, 8vw, 3.2rem); line-height: 1.03; letter-spacing: -0.06em; }
+    .intro { margin: 0 0 28px; max-width: 450px; color: var(--muted); font-size: 1rem; }
+
+    .search { display: flex; gap: 9px; margin-bottom: 18px; }
+    .search-box {
+      display: flex; align-items: center; gap: 10px; flex: 1;
+      padding: 0 15px; border: 1px solid var(--line); border-radius: 14px;
+      background: var(--surface); box-shadow: 0 9px 30px rgba(19, 71, 88, 0.06);
+    }
+    .search-box svg { flex: 0 0 auto; color: var(--muted); }
+    input {
+      width: 100%; border: 0; outline: 0; padding: 13px 0; color: var(--ink);
+      background: transparent; font: inherit; font-size: 0.96rem;
+    }
+    button { border: 0; cursor: pointer; font: inherit; }
+    .search button {
+      padding: 0 18px; border-radius: 14px; color: #fff; background: var(--accent-deep);
+      font-weight: 750; transition: transform .2s ease, filter .2s ease;
+    }
+    .search button:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .search button:disabled { cursor: wait; opacity: .65; }
+    .status { min-height: 22px; margin: 0 2px 16px; color: var(--muted); font-size: .87rem; }
+    .status.error { color: #c25e4b; }
+
+    .current {
+      position: relative; overflow: hidden; padding: 25px 26px 23px; border: 1px solid var(--line);
+      border-radius: 24px; background: var(--surface); box-shadow: var(--shadow); backdrop-filter: blur(16px);
+    }
+    .current::after {
+      content: ""; position: absolute; width: 180px; height: 180px; right: -60px; top: -72px;
+      border-radius: 50%; background: linear-gradient(135deg, rgba(242, 184, 73, .3), transparent 65%);
+    }
+    .place { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: .9rem; font-weight: 650; }
+    .place svg { color: var(--accent); }
+    .current-main { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 20px; }
+    .temperature { font-size: clamp(4.4rem, 18vw, 7rem); font-weight: 250; line-height: .82; letter-spacing: -.1em; }
+    .temperature sup { margin-left: 7px; font-size: .36em; font-weight: 600; letter-spacing: -.04em; vertical-align: top; }
+    .condition { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
+    .weather-icon { font-size: 3.2rem; line-height: 1; }
+    .condition strong { font-size: .95rem; }
+    .condition span { color: var(--muted); font-size: .82rem; }
+    .details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 27px; }
+    .detail { padding: 12px 11px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.08); }
+    .detail span { display: block; color: var(--muted); font-size: .73rem; }
+    .detail strong { display: block; margin-top: 2px; font-size: .9rem; }
+
+    .section-heading { display: flex; align-items: baseline; justify-content: space-between; margin: 31px 2px 13px; }
+    h2 { margin: 0; font-size: 1.08rem; letter-spacing: -.02em; }
+    .section-heading span { color: var(--muted); font-size: .8rem; }
+    .forecast { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .day {
+      min-width: 0; padding: 15px 8px 14px; border: 1px solid var(--line); border-radius: 16px;
+      background: var(--surface); text-align: center; transition: transform .2s ease, border-color .2s ease;
+    }
+    .day:hover { transform: translateY(-3px); border-color: rgba(22, 139, 155, .35); }
+    .day-name { color: var(--muted); font-size: .74rem; font-weight: 700; }
+    .day-icon { margin: 12px 0 10px; font-size: 1.65rem; line-height: 1; }
+    .day-temp { font-size: .86rem; font-weight: 750; }
+    .day-temp span { color: var(--muted); font-weight: 500; }
+    footer { margin-top: 31px; color: var(--muted); font-size: .76rem; text-align: center; }
+    footer a { color: var(--accent); text-decoration: none; }
+    .loading { opacity: .55; pointer-events: none; }
+    @media (max-width: 520px) {
+      main { width: min(100% - 22px, 640px); padding-top: 32px; }
+      .search button { padding: 0 14px; }
+      .current { padding: 21px 18px; }
+      .forecast { gap: 5px; }
+      .day { padding-left: 3px; padding-right: 3px; }
+    }
+    @media (max-width: 370px) {
+      .current-main { align-items: flex-start; flex-direction: column; gap: 20px; }
+      .condition { align-items: flex-start; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <main id="app">
+    <div class="eyebrow">Atlas weather</div>
+    <h1>Find your weather.</h1>
+    <p class="intro">A clear view of today and the days ahead, wherever in the world you are.</p>
+
+    <form class="search" id="search-form">
+      <label class="search-box" aria-label="Search for a city">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="city-input" type="search" placeholder="Search any city in the world" autocomplete="off">
+      </label>
+      <button id="search-button" type="submit">Search</button>
+    </form>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+
+    <section class="current" aria-labelledby="current-title">
+      <div class="place" id="place">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <span id="location-name">Tokyo, Japan</span>
+      </div>
+      <div class="current-main">
+        <div class="temperature" id="temperature">--<sup>°C</sup></div>
+        <div class="condition">
+          <div class="weather-icon" id="weather-icon">☀️</div>
+          <strong id="condition">Loading weather</strong>
+          <span id="updated">Updated just now</span>
+        </div>
+      </div>
+      <div class="details">
+        <div class="detail"><span>Feels like</span><strong id="feels-like">--°</strong></div>
+        <div class="detail"><span>Humidity</span><strong id="humidity">--%</strong></div>
+        <div class="detail"><span>Wind</span><strong id="wind">-- km/h</strong></div>
+      </div>
+    </section>
+
+    <div class="section-heading">
+      <h2>5-day forecast</h2>
+      <span id="forecast-label">Tokyo</span>
+    </div>
+    <section class="forecast" id="forecast" aria-label="Five day forecast"></section>
+    <footer>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a> · Search cities worldwide</footer>
+  </main>
+
+  <script>
+    const fallback = {
+      name: "Tokyo", country: "Japan", latitude: 35.6762, longitude: 139.6503,
+      current: { temperature_2m: 22, apparent_temperature: 23, relative_humidity_2m: 62, wind_speed_10m: 11, weather_code: 1 },
+      daily: {
+        time: ["2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18"],
+        weather_code: [1, 2, 3, 61, 80], temperature_2m_max: [25, 26, 24, 23, 25], temperature_2m_min: [18, 19, 20, 18, 19]
+      }
+    };
+    const codeInfo = {
+      0: ["Clear sky", "☀️"], 1: ["Mainly clear", "🌤️"], 2: ["Partly cloudy", "⛅"], 3: ["Overcast", "☁️"],
+      45: ["Foggy", "🌫️"], 48: ["Rime fog", "🌫️"], 51: ["Light drizzle", "🌦️"], 53: ["Drizzle", "🌦️"], 55: ["Heavy drizzle", "🌧️"],
+      61: ["Light rain", "🌦️"], 63: ["Rain", "🌧️"], 65: ["Heavy rain", "🌧️"], 71: ["Light snow", "🌨️"], 73: ["Snow", "❄️"],
+      75: ["Heavy snow", "❄️"], 80: ["Rain showers", "🌦️"], 81: ["Showers", "🌧️"], 82: ["Heavy showers", "⛈️"],
+      95: ["Thunderstorm", "⛈️"], 96: ["Thunderstorm", "⛈️"], 99: ["Thunderstorm", "⛈️"]
+    };
+    const $ = (id) => document.getElementById(id);
+    const info = (code) => codeInfo[code] || ["Changing skies", "🌤️"];
+    const dayName = (date, index) => index === 0 ? "Today" : new Date(date + "T12:00:00").toLocaleDateString(undefined, { weekday: "short" });
+    function render(data, isFallback = false) {
+      const current = data.current, daily = data.daily, weather = info(current.weather_code);
+      $("location-name").textContent = `${data.name}, ${data.country || "World"}`;
+      $("forecast-label").textContent = data.name;
+      $("temperature").innerHTML = `${Math.round(current.temperature_2m)}<sup>°C</sup>`;
+      $("condition").textContent = weather[0];
+      $("weather-icon").textContent = weather[1];
+      $("feels-like").textContent = `${Math.round(current.apparent_temperature)}°`;
+      $("humidity").textContent = `${Math.round(current.relative_humidity_2m)}%`;
+      $("wind").textContent = `${Math.round(current.wind_speed_10m)} km/h`;
+      $("updated").textContent = isFallback ? "Offline forecast" : "Updated just now";
+      $("forecast").innerHTML = daily.time.slice(0, 5).map((date, i) => {
+        const dayWeather = info(daily.weather_code[i]);
+        return `<article class="day"><div class="day-name">${dayName(date, i)}</div><div class="day-icon">${dayWeather[1]}</div><div class="day-temp">${Math.round(daily.temperature_2m_max[i])}° <span>${Math.round(daily.temperature_2m_min[i])}°</span></div></article>`;
+      }).join("");
+    }
+    async function getWeather(place) {
+      const params = new URLSearchParams({
+        latitude: place.latitude, longitude: place.longitude, timezone: "auto",
+        forecast_days: 5, current: "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m",
+        daily: "weather_code,temperature_2m_max,temperature_2m_min"
+      });
+      const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+      if (!response.ok) throw new Error("Weather service unavailable");
+      return { ...place, ...(await response.json()) };
+    }
+    async function searchCity(query) {
+      const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`);
+      if (!response.ok) throw new Error("Location search unavailable");
+      const result = await response.json();
+      if (!result.results?.length) throw new Error("No city found. Try a different spelling.");
+      return result.results[0];
+    }
+    async function load(query = "Tokyo") {
+      const form = $("search-form"), button = $("search-button"), app = $("app");
+      form.classList.add("loading"); button.disabled = true; $("status").textContent = query === "Tokyo" ? "Loading Tokyo…" : `Searching for ${query}…`;
+      $("status").classList.remove("error");
+      let cityResolved = false;
+      try {
+        const place = query === "Tokyo" ? fallback : await searchCity(query);
+        cityResolved = true;
+        const data = await getWeather(place);
+        render(data);
+        $("status").textContent = `Live conditions for ${data.name}.`;
+      } catch (error) {
+        if (cityResolved || query.toLowerCase() === "tokyo" || !navigator.onLine) {
+          render(fallback, true); $("status").textContent = "Live data is unavailable — showing a Tokyo fallback forecast.";
+        } else {
+          $("status").textContent = error.message; $("status").classList.add("error");
+        }
+      } finally {
+        form.classList.remove("loading"); button.disabled = false;
+      }
+    }
+    $("search-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = $("city-input").value.trim();
+      if (query) load(query);
+    });
+    load();
+  </script>
+</body>
+</html>
