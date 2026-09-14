@@ -16,3 +16,9 @@ streamlit run app.py
 3. Set the main file to `app.py` and click **Deploy**.
 
 No API key or secrets are required.
+
+## Live apps
+
+- Static web app: https://ugh777.github.io/atlas-weather/
+- Streamlit app: https://atlas-weather-ugh.streamlit.app/
+- Source repository: https://github.com/ugh777/atlas-weather

@@ -201,7 +201,8 @@ st.markdown(f'<div class="forecast-grid">{"".join(cards)}</div>', unsafe_allow_h
 st.markdown(
     '<div style="margin-top:2rem;text-align:center;color:#6f8794;font-size:.76rem">'
     'Weather data by <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a>'
-    ' · <a href="https://ugh777.github.io/atlas-weather/" target="_blank">Open the public web app</a>'
+    ' · <a href="https://ugh777.github.io/atlas-weather/" target="_blank">Web app</a>'
+    ' · <a href="https://atlas-weather-ugh.streamlit.app/" target="_blank">Streamlit app</a>'
     '</div>',
     unsafe_allow_html=True,
 )
