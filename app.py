@@ -60,13 +60,21 @@ st.markdown(
     """
     <style>
     :root { --ink:#163247; --muted:#6f8794; --accent:#168b9b; }
-    .stApp { position:relative; overflow:hidden; background:linear-gradient(145deg,#dff3f4 0%,#f7f4eb 48%,#dceef6 100%); color:var(--ink); }
+    .stApp { position:relative; overflow:hidden; background:
+      repeating-linear-gradient(112deg,rgba(255,255,255,.16) 0 1px,transparent 1px 18px),
+      radial-gradient(ellipse at 12% 8%,rgba(255,255,255,.62) 0 9%,transparent 27%),
+      radial-gradient(ellipse at 79% 4%,rgba(255,255,255,.5) 0 11%,transparent 30%),
+      linear-gradient(145deg,#c7e5eb 0%,#e5edf0 45%,#b8d4df 100%); color:var(--ink); }
     .stApp::before, .stApp::after { content:""; position:fixed; z-index:0; width:34rem; height:34rem; border-radius:50%; pointer-events:none; filter:blur(10px); opacity:.7; }
     .stApp::before { top:-15rem; right:-10rem; background:radial-gradient(circle at 35% 35%,rgba(67,201,196,.5),rgba(67,201,196,0) 68%); }
     .stApp::after { bottom:-18rem; left:-12rem; background:radial-gradient(circle at 55% 45%,rgba(255,193,102,.45),rgba(255,193,102,0) 68%); }
     .stApp > * { position:relative; z-index:1; }
     @media (prefers-color-scheme: dark) {
-      .stApp { background:linear-gradient(145deg,#102d38 0%,#172a3a 48%,#243148 100%); }
+      .stApp { background:
+        repeating-linear-gradient(112deg,rgba(187,229,235,.08) 0 1px,transparent 1px 18px),
+        radial-gradient(ellipse at 12% 8%,rgba(128,177,190,.25) 0 9%,transparent 27%),
+        radial-gradient(ellipse at 79% 4%,rgba(100,143,160,.22) 0 11%,transparent 30%),
+        linear-gradient(145deg,#102d38 0%,#172a3a 48%,#243148 100%); }
       .stApp::before { background:radial-gradient(circle at 35% 35%,rgba(61,194,195,.34),rgba(61,194,195,0) 68%); }
       .stApp::after { background:radial-gradient(circle at 55% 45%,rgba(245,173,90,.22),rgba(245,173,90,0) 68%); }
     }
